@@ -1,0 +1,131 @@
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Tablolar</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Ürün Tasarla</li>
+    </ol>
+</nav>
+
+<div>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hamMaddeModal">
+        Ürün Tasarla
+    </button>
+
+    <!-- Ham Madde Ekle Modal -->
+    <div class="modal fade" id="hamMaddeModal" tabindex="-1" role="dialog" aria-labelledby="hamMaddeModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Ürün Tasarla</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <%include ../form/urunTasarim.ejs%>
+                </div>
+                <div class="card-footer">
+                    <button form="form"  type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+
+
+<div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Ad</th>
+            <th scope="col">Ham Maddeler ve Birimleri</th>
+            <th scope="col">Toplam Maliyet</th>
+        </tr>
+        </thead>
+
+        <tbody>
+            <%results.forEach(function (item) { %>
+            <tr>
+                <td> <%=item.id%></td>
+                <td> <%=item.ad%></td>
+                <%toplamMaliyet=0%>
+                <td> <%item.HamMaddes.forEach(function (value) { %>
+                    <%=value.Stok.ad%>'den  <%=value.miktar%> adet =  <%=value.Stok.birimFiyat%><br>
+                    <%toplamMaliyet=toplamMaliyet+(value.miktar*value.Stok.birimFiyat)%>
+                    <% })%></td>
+
+                <td> <%=toplamMaliyet%> TL</td>
+            </tr>
+
+            <% })%>
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    function hamMaddeListesiGetir(id) {
+        document.getElementById("hamMaddeBtn"+id).remove();
+
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {  // code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function () {
+            var maliyet=0
+            if (this.readyState == 4 && this.status == 200) {
+                for (index in JSON.parse(this.responseText)) {
+                    var div = document.createElement("div");
+                    div.innerHTML=JSON.parse(this.responseText)[index].HamMadde.ad+" --> "+JSON.parse(this.responseText)[index].birim+" adet --> "+JSON.parse(this.responseText)[index].HamMadde.fiyat+" TL";
+                    var a=JSON.parse(this.responseText)[index].birim*JSON.parse(this.responseText)[index].HamMadde.fiyat
+                    maliyet=maliyet+a;
+
+                    document.getElementById("hamMaddeTD"+id).appendChild(div);
+                }
+                var xdiv = document.createElement("div");
+                xdiv.innerHTML=maliyet+" TL";
+
+                document.getElementById("hamMaddeTD"+id).appendChild(xdiv);
+
+            }
+        }
+
+        xmlhttp.open("GET", "/hamMaddeBirimAjax/"+id , true);
+        xmlhttp.send();
+
+
+    }
+    function yariMamulListesiGetir(id) {
+        document.getElementById("yariMamulBtn"+id).remove();
+
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {  // code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function () {
+            var x=0
+            if (this.readyState == 4 && this.status == 200) {
+                for (index in JSON.parse(this.responseText)) {
+                    var div = document.createElement("div");
+                    div.innerHTML=JSON.parse(this.responseText)[index].UrunId+" --> "+JSON.parse(this.responseText)[index].birim+" adet";
+
+                    document.getElementById("yariMamulTD"+id).appendChild(div);
+                }
+
+
+            }
+        }
+
+        xmlhttp.open("GET", "/urunBirimAjax/"+id , true);
+        xmlhttp.send();
+
+
+    }
+</script>

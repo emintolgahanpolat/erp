@@ -1,0 +1,95 @@
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Tablolar</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Ürün Imallat</li>
+    </ol>
+</nav>
+
+<div>
+    <a class="btn btn-primary" href="/urunImalatForm">
+        Ürün Imallat
+    </a>
+
+</div>
+<br>
+
+
+
+<div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Ürün</th>
+            <th>Miktar</th>
+            <th>Kar Oranı</th>
+            <th>Birim Maliyet</th>
+            <th>Toplam Maliyet</th>
+            <th>Birim Satiş Fiyati</th>
+            <th>Toplam Satiş Fiyati</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <%totalFiyat=0,totalMaliyet=0,toplamMiktar=0%>
+        <%results.forEach(function (item) { %>
+
+        <tr>
+            <td><%=item.id%></td>
+            <td><%=item.UrunTasarim.ad%></td>
+            <td><%=item.miktar%></td>
+            <td>%<%=item.karOrani%></td>
+            <%toplamMaliyet=0%>
+            <td><%item.UrunTasarim.HamMaddes.forEach(function (value) { %>
+                <%toplamMaliyet=toplamMaliyet+(value.miktar*value.Stok.birimFiyat)%>
+                <%})%>
+                <%=toplamMaliyet%> TL
+            </td>
+            <td><%=item.miktar*toplamMaliyet%> TL</td>
+            <td><%=((toplamMaliyet*item.karOrani)/100)+toplamMaliyet%> TL</td>
+            <td><%=(((item.miktar*toplamMaliyet)*item.karOrani)/100)+(item.miktar*toplamMaliyet)%> TL</td>
+            <%toplamMiktar=toplamMiktar+item.miktar%>
+            <%totalMaliyet=totalMaliyet+(item.miktar*toplamMaliyet)%>
+            <%totalFiyat=totalFiyat+(((item.miktar*toplamMaliyet)*item.karOrani)/100)+(item.miktar*toplamMaliyet)%>
+
+        </tr>
+
+
+        <%})%>
+
+        </tbody>
+    </table>
+</div>
+
+
+
+<div >
+    <div class="row">
+        <div class="col-3">
+            <div class="card <%if((100*toplamMiktar)/10000>90){%>bg-danger<%}else {%>bg-info <%}%>text-white mb-3">
+                <div class="card-header">Kapasite</div>
+                <div class="card-body"> Toplam Kapasite = 1.000<br>Kapasitenin %<%=(100*toplamMiktar)/1000%> dolu</div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card bg-danger text-white mb-3">
+                <div class="card-header">Toplam Maliyet</div>
+                <div class="card-body"> <%=totalMaliyet%> TL</div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card bg-success text-white mb-3">
+                <div class="card-header">Toplam Satiş Fiyati</div>
+                <div class="card-body"> <%=totalFiyat%> TL</div>
+            </div>
+        </div>
+
+        <div class="col-3">
+            <div class="card bg-warning text-white mb-3">
+                <div class="card-header">Net Kar</div>
+                <div class="card-body"> <%=totalFiyat-totalMaliyet%> TL</div>
+            </div>
+        </div>
+    </div>
+</div>

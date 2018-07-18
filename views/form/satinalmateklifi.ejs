@@ -1,0 +1,127 @@
+
+<form action="/satinAlma" method="post" id="form">
+
+    <div class="form-group">
+        <label>Tedarikciler</label>
+        <div style="width: 100%;max-height: 100px;overflow: scroll;" id="tedarikciList">
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label >Ham Maddeler</label>
+        <div style="width: 100%;max-height: 100px;overflow: scroll;" id="hamMaddeList">
+            <!--Burası Ajax İle Dolacak-->
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="aciklama">Açıklama</label>
+        <input type="text" class="form-control" id="aciklama" name="aciklama" placeholder="Açıklama">
+    </div>
+</form>
+
+<script>
+    function checkBoxHamMadde(checkbox,id) {
+        if (checkbox.checked) {
+            var input = document.createElement("input");
+            input.type="text";
+            input.className="custom-control-label";
+            input.name="hamMaddeAdet";
+            input.placeholder="Adet";
+            input.id=id+"input";
+            document.getElementById(id).appendChild(input);
+        } else {
+            document.getElementById(id+"input").remove()
+        }
+    }
+</script>
+
+<script>
+
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp = new XMLHttpRequest();
+    } else {  // code for IE6, IE5
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            for (index in JSON.parse(this.responseText)) {
+                var div = document.createElement("div");
+                div.className = "custom-control custom-checkbox";
+                div.setAttribute("id",JSON.parse(this.responseText)[index].id);
+                var input = document.createElement("input");
+                input.setAttribute("id","hamMadde"+JSON.parse(this.responseText)[index].id);
+                input.type="checkbox";
+                input.name="hamMaddeBirimIDs";
+                input.setAttribute("onclick","checkBoxHamMadde(this,"+JSON.parse(this.responseText)[index].id+")");
+                input.className="custom-control-input";
+                input.value=JSON.parse(this.responseText)[index].id;
+                div.appendChild(input);
+                var label = document.createElement("label");
+                label.className="custom-control-label"
+                label.setAttribute("for","hamMadde"+JSON.parse(this.responseText)[index].id);
+                label.innerHTML=JSON.parse(this.responseText)[index].ad;
+                div.appendChild(label);
+
+
+
+                document.getElementById("hamMaddeList").appendChild(div);
+            }
+
+
+        }
+    }
+
+    xmlhttp.open("GET", "/stokAjax" , true);
+    xmlhttp.send();
+
+
+
+</script>
+
+<script>
+
+
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp = new XMLHttpRequest();
+    } else {  // code for IE6, IE5
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            for (index in JSON.parse(this.responseText)) {
+
+                var div = document.createElement("div");
+                div.className = "custom-control custom-checkbox"
+                var input = document.createElement("input");
+                input.setAttribute("id","tedarikci"+JSON.parse(this.responseText)[index].id);
+                input.type="radio";
+                input.name="tedarikciID";
+                input.className="custom-control-input";
+                input.value=JSON.parse(this.responseText)[index].id;
+
+                div.appendChild(input);
+                var label = document.createElement("label");
+                label.className="custom-control-label"
+                label.setAttribute("for","tedarikci"+JSON.parse(this.responseText)[index].id);
+                label.innerHTML=JSON.parse(this.responseText)[index].ad;
+                div.appendChild(label);
+
+
+
+
+                document.getElementById("tedarikciList").appendChild(div);
+            }
+
+
+        }
+    }
+
+    xmlhttp.open("GET", "/tedarikciAjax" , true);
+    xmlhttp.send();
+
+
+</script>
+

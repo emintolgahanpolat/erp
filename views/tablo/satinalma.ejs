@@ -1,0 +1,63 @@
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Satın Alma</a></li>
+    </ol>
+</nav>
+<div >
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hamMaddeModal">
+       Teklif Hazırla
+    </button>
+    <div class="modal fade" id="hamMaddeModal" tabindex="-1" role="dialog" aria-labelledby="hamMaddeModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Ürün Tasarla</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <%include ../form/satinalmateklifi.ejs%>
+                </div>
+                <div class="card-footer">
+                    <button form="form"  type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+<br>
+
+<div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Firma</th>
+            <th>Siparişler Ve Miktarları</th>
+            <th>Açıklama</th>
+        </tr>
+        </thead>
+
+        <tbody>
+            <%results.forEach(function (item) {%>
+
+            <tr>
+                <td> <%=item.id%></td>
+                <td> <%=item.Tedarikci.ad%></td>
+                <td> <%item.SiparisHamMaddes.forEach(function (value) { %>
+                    <%=value.Stok.ad%>'den  <%=value.miktar%> adet <br>
+                    <% })%></td>
+                <td> <%=item.ad%></td>
+            </tr>
+
+
+            <%})%>
+        </tbody>
+    </table>
+</div>
+

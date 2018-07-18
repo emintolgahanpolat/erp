@@ -1,0 +1,99 @@
+
+<form action="/urunImalat" method="post" >
+
+
+
+
+    <div class="form-group" >
+        <label >Urun Listesi</label>
+        <div style="width: 100%;max-height: 100px;overflow: scroll;background: antiquewhite;padding: 15px; border-radius: 8px" id="urunTasarimList">
+            <%results.forEach(function (item) { %>
+            <div class="form-group">
+
+                <label for="<%=item.id%>"><%=item.ad%>(
+                    <%toplamMaliyet=0%>
+                    <%item.HamMaddes.forEach(function (value) { %>
+                    <%=value.Stok.ad%>'den  <%=value.miktar%> adet =  <%=value.Stok.birimFiyat%> /
+                    <%toplamMaliyet=toplamMaliyet+(value.miktar*value.Stok.birimFiyat)%>
+                    <% })%>
+                    Toplam Maliyet = <%=toplamMaliyet%> TL)
+                </label>
+                <input type="radio" value="<%=item.id%>"  id="<%=item.id%>" onclick="karHesapla(<%=toplamMaliyet%> )" name="urunTasarimID">
+            </div>
+            <% })%>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="miktar">Üretim Miktari</label>
+        <input type="text" class="form-control" id="miktar" name="miktar" placeholder="Üretim Miktari">
+    </div>
+    <div class="form-group">
+        <label for="karOrani">Kar Oranı % </label>
+        <input type="text" class="form-control" id="karOrani" name="karOrani" placeholder="Kar Oranı"  >
+    </div>
+    <div class="form-group">
+        <label > Satış Fiyati</label>
+        <input type="text" class="form-control" disabled id="satisFiyati">
+    </div>
+
+
+    <button   type="submit" class="btn btn-primary">Kaydet</button>
+
+</form>
+
+<script >
+    function karHesapla(topMaliyet) {
+        var oran=document.getElementById('karOrani').value;
+        document.getElementById('satisFiyati').value=((topMaliyet*oran)/100)+topMaliyet
+    }
+</script>
+
+
+<script>
+    function urunTasarim() {
+        document.getElementById("urunTasarimBtn").remove();
+        var label = document.createElement("label");
+        label.innerHTML="Urunler";
+        document.getElementById("urunTasarimList").appendChild(label);
+
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {  // code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                for (index in JSON.parse(this.responseText)) {
+                    var div = document.createElement("div");
+                    div.className = "custom-control custom-checkbox"
+                    var input = document.createElement("input");
+                    input.setAttribute("id","urunTasarim"+JSON.parse(this.responseText)[index].id);
+                    input.type="radio";
+                    input.name="urunTasarimID";
+
+                    input.className="custom-control-input";
+                    input.value=JSON.parse(this.responseText)[index].id;
+
+                    div.appendChild(input);
+                    var label = document.createElement("label");
+                    label.className="custom-control-label"
+                    label.setAttribute("for","urunTasarim"+JSON.parse(this.responseText)[index].id);
+                    label.innerHTML=JSON.parse(this.responseText)[index].ad;
+                    div.appendChild(label);
+
+
+
+
+                    document.getElementById("urunTasarimList").appendChild(div);
+                }
+
+
+            }
+        }
+
+        xmlhttp.open("GET", "/urunTasarimAjax" , true);
+        xmlhttp.send();
+
+    }
+</script>

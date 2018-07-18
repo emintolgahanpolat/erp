@@ -1,0 +1,85 @@
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Tablolar</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Stok</li>
+    </ol>
+</nav>
+<div >
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hamMaddeModal">
+        Stok Ekle
+    </button>
+
+    <!-- Ham Madde Ekle Modal -->
+    <div class="modal fade" id="hamMaddeModal" tabindex="-1" role="dialog" aria-labelledby="hamMaddeModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Stok Ekle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <%include ../form/stok.ejs%>
+                </div>
+
+                <div class="card-footer">
+                    <button form="form"  type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+<div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Ad</th>
+            <th>Tedarikci</th>
+            <th>İşlem Tarihi</th>
+            <th>Miktar</th>
+            <th>Birim Fiyat</th>
+            <th>Toplam Fiyat</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <%toplamFiyat=0;toplamMiktar=0%>
+        <%results.forEach(function (item) { %>
+        <tr<%if(item.adet<=40){%> class="table-danger" <%}else if(item.adet<=100){%> class="table-warning" <%}%>>
+            <td class="min"><%=item.id%></td>
+            <td ><%=item.ad%></td>
+            <td><%=item.Tedarikci.ad%></td>
+            <td><%=item.islemTarihi.toDateString()%></td>
+            <td><%=item.miktar-item.kullanilan%></td>
+            <td><%=item.birimFiyat%> TL</td>
+            <td><%=item.birimFiyat*item.miktar%> TL</td>
+        </tr>
+        <%toplamMiktar=toplamMiktar+item.miktar%>
+        <%toplamFiyat=toplamFiyat+(item.birimFiyat*item.miktar)%>
+        <%})%>
+        </tbody>
+    </table>
+</div>
+
+
+<div >
+    <div class="row">
+        <div class="col-3">
+            <div class="card <%if((100*toplamMiktar)/20000>90){%>bg-danger<%}else {%>bg-info <%}%>text-white mb-3">
+                <div class="card-header">Kapasite</div>
+                <div class="card-body"> Toplam Kapasite = 20,000<br>Kapasitenin %<%=(100*toplamMiktar)/20000%> dolu</div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card bg-success text-white mb-3">
+                <div class="card-header">Toplam Fiyat</div>
+                <div class="card-body"> <%=toplamFiyat%> TL</div>
+            </div>
+        </div>
+    </div>
+</div>
